@@ -200,7 +200,7 @@ INSERT INTO `student` (`StdSSN`, `StdFirstName`, `StdLastName`, `StdCity`, `StdS
 ('678-90-1234', 'TESS', 'DODGE', 'REDMOND', 'WA', '98114-2344', 'ACCT', 'SO', '3.30'),
 ('789-01-2345', 'ROBERTO', 'MORALES', 'SEATTLE', 'WA', '98121-2212', 'FIN', 'JR', '2.50'),
 ('876-54-3210', 'CRISTOPHER', 'COLAN', 'SEATTLE', 'WA', '98114-1332', 'IS', 'SR', '4.00'),
-('890-12-3456', 'LUKE', 'BRAZZI', 'SEATTLE', 'WA', '98116-0021', 'IS', 'SR', '2.00'),
+('890-12-3456', 'LUKE', 'BRAZZI', 'SEATTLE', 'WA', '98116-0021', 'IS', 'SR', '2.20'),
 ('901-23-4567', 'WILLIAM', 'PILGRIM', 'BOTHELL', 'WA', '98113-1185', 'IS', 'SO', '3.80');
 
 --
