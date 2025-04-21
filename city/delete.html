@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+  <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+  <title>刪除區域</title>
+</head>
+
+<body>
+  請選擇欲刪除城市
+  <select id="city">
+      <option value="">請選擇</option>
+  </select>
+  <br>
+  <button id='del_city_button' type='button' onclick="Delete('deletecity');resetcity();">刪除</button>
+  <br>
+  請選擇欲刪除地區
+  <select id="city2">
+      <option value="">請選擇</option>
+  </select>
+  <select id="site_id">
+      <option value="">請選擇</option>
+  </select>
+  <br>
+  <button id='del_site_button' type='button' onclick="Delete('deletesite')">刪除</button>
+  <br>
+  請選擇欲刪除道路
+  <select id="city3">
+      <option value="">請選擇</option>
+  </select>
+  <select id="site_id2">
+      <option value="">請選擇</option>
+  </select>
+  <select id="road">
+      <option value="">請選擇</option>
+  </select>
+  <br>
+  <button id='del_road_button' type='button' onclick="Delete('deleteroad')">刪除</button>
+</body>
+<script>
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: "action.php",
+            data: { act: "city" },
+            dataType: "json",
+            success: function(result) {
+                for (i = 0; i < result.length; i++) {
+                    $("#city").append("<option value='" + result[i]['city_id'] + "'>" + result[i]['city'] + "</option>");
+                    $("#city2").append("<option value='" + result[i]['city_id'] + "'>" + result[i]['city'] + "</option>");
+                    $("#city3").append("<option value='" + result[i]['city_id'] + "'>" + result[i]['city'] + "</option>");
+                }
+            },
+            error: function(xhr, status, msg) {
+                console.error(xhr);
+                console.error(msg);
+            }
+        });
+    });
+    $('#city2').change(function() {
+        $('#site_id').empty().append("<option value=''>請選擇</option>");
+    
+        $.ajax({
+            type: "GET",
+            url: "action.php",
+            data: { act: 'site_id', val: $('#city2').val() },
+            dataType: "json",
+            success: function(result) {
+                if (result == "") {
+                    $('#site_id').val($('option:first').val());
+                }
+    
+                for (i = 0; i < result.length; i++) {
+                    $('#site_id').append("<option value='" + result[i]['site_id'] + "'>" + result[i]['site'] + "</option>");
+                }
+            },
+            error: function(xhr, status, msg) {
+                console.error(xhr);
+                console.error(msg);
+            }
+        });
+    });
+    $('#city3').change(function() {
+        $('#site_id2').empty().append("<option value=''>請選擇</option>");
+        $('#road').empty().append("<option value=''>請選擇</option>");
+        $.ajax({
+            type: "GET",
+            url: "action.php",
+            data: { act: 'site_id', val: $('#city3').val() },
+            dataType: "json",
+            success: function(result) {
+                for (i = 0; i < result.length; i++) {
+                    $('#site_id2').append("<option value='" + result[i]['site_id'] + "'>" + result[i]['site'] + "</option>");
+                }
+            },
+            error: function(xhr, status, msg) {
+                console.error(xhr);
+                console.error(msg);
+            }
+        });
+    });
+    $('#site_id2').change(function() {
+        $('#road').empty().append("<option value=''>請選擇</option>");
+    
+        $.ajax({
+            type: "GET",
+            url: "action.php",
+            data: { act: 'road', val: $('#site_id2').val() },
+            dataType: "json",
+            success: function(result) {
+                if (result == "") {
+                    $('#road').val($('option:first').val());
+                }
+    
+                for (i = 0; i < result.length; i++) {
+                    $('#road').append("<option value='" + result[i]['site_id'] + "'>" + result[i]['road'] + "</option>");
+                }
+            },
+            error: function(xhr, status, msg) {
+                console.error(xhr);
+                console.error(msg);
+            }
+        });
+    });
+    function Delete(action) {
+        var value = null, value2 = null, value3 = null, value4 = null;
+    
+        switch (action) {
+            case 'deletecity':
+                value = $('#city').val();
+                var yes = confirm("刪除：" + $('#city').find(":selected").text());
+                break;
+    
+            case 'deletesite':
+                value = $('#site_id').val();
+                var yes = confirm("刪除：" + $('#site_id').find(":selected").text());
+                break;
+    
+            case 'deleteroad':
+                value = $('#road').val();
+                value2 = $('#road').find(":selected").text();
+                var yes = confirm("刪除：" + value + value2);
+                break;
+        }
+    
+        if (yes) {
+            $.ajax({
+                type: "GET",
+                url: "action.php",
+                data: { act: action, val: value, val2: value2, val3: value3, val4: value4 },
+                dataType: "json",
+                error: function(xhr, status, msg) {
+                    console.error(xhr);
+                    console.error(msg);
+                }
+            });
+    
+            // 清空所有欄位與重設下拉式選單
+            $('#city').val($('option:first').val());
+            $('#city2').val($('option:first').val());
+            $('#city3').val($('option:first').val());
+            $('#site_id').val($('option:first').val());
+            $('#site_id2').val($('option:first').val());
+            $('#road').val($('option:first').val());
+        }
+    }
+    function resetcity() {
+        $('#city').empty().append("<option value=''>請選擇</option>");
+        $('#city2').empty().append("<option value=''>請選擇</option>");
+        $('#city3').empty().append("<option value=''>請選擇</option>");
+    
+        $.ajax({
+            type: "GET",
+            url: "action.php",
+            data: { act: "city" },
+            dataType: "json",
+            success: function(result) {
+                for (i = 0; i < result.length; i++) {
+                    $('#city').append("<option value='" + result[i]['city_id'] + "'>" + result[i]['city'] + "</option>");
+                    $('#city2').append("<option value='" + result[i]['city_id'] + "'>" + result[i]['city'] + "</option>");
+                    $('#city3').append("<option value='" + result[i]['city_id'] + "'>" + result[i]['city'] + "</option>");
+                }
+            },
+            error: function(xhr, status, msg) {
+                console.error(xhr);
+                console.error(msg);
+            }
+        });
+    }
+</script>
+</html>

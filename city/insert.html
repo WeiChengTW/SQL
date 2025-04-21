@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <title>新增區域</title>
+</head>
+
+<body>
+    請輸入欲新增城市編號：
+    <input id='input1' size='5'/>
+    <br>
+    請輸入欲新增城市名稱：
+    <input id='input2' size='10'>
+    <br>
+    <button id='city_button' type='button' onclick="insert('insertcity');resetcity();">新增</button>
+    <br>
+    請選擇欲新增區域之城市
+    <select id="city">
+        <option value="">請選擇</option>
+    </select>
+    <br>
+    請輸入欲新增地區之郵遞區號：
+    <input id='input3' size='5'>
+    <br>
+    請輸入欲新增地區名稱：
+    <input id='input4' size='10'>
+    <br>
+    <button id='site_button' type='button' onclick="insert('insertsite')">新增</button>
+    <br>
+    請選擇欲新增道路之城市及地區
+    <select id="city2">
+        <option value="">請選擇</option>
+    </select>
+    <select id="site_id">
+        <option value="">請選擇</option>
+    </select>
+    <br>
+    請輸入欲新增道路名稱：
+    <input id='input5' type='text' size='15'>
+    <br>
+    <button id='road_button' type='button' onclick="insert('insertroad')">新增</button>
+</body>
+<script>
+    $(function() {
+        $('#city').empty().append('<option value="">請選擇</option>');
+        $('#city2').empty().append('<option value="">請選擇</option>');
+    
+        $.ajax({
+            type: "GET",
+            url: 'action.php',
+            data: { act: 'city' },
+            dataType: "json",
+            success: function(result) {
+                for (i = 0; i < result.length; i++) {
+                    $('#city').append('<option value="' + result[i]['city_id'] + '">' + result[i]['city'] + '</option>');
+                    $('#city2').append('<option value="' + result[i]['city_id'] + '">' + result[i]['city'] + '</option>');
+                }
+            },
+            error: function(xhr, status, msg) {
+                console.error(xhr);
+                console.error(msg);
+            }
+        });
+    });
+    $('#city2').change(function(){
+        $('#site_id').empty().append('<option value="">請選擇</option>');
+        $.ajax({
+            type: "GET",
+            url: 'action.php',
+            data: { act: 'site_id', val: $('#city2').val() },
+            dataType: "json",
+            success: function(result) {
+                // 清除市回到預設值時，地區回到預設值
+                if (result == "") {
+                    $('#site_id').val($('#option:first').val());
+                }
+                // 依據縣市回傳的值去改變地區的內容
+                for (i = 0; i < result.length; i++) {
+                    $('#site_id').append('<option value="' + result[i]['site_id'] + '">' + result[i]['site'] + '</option>');
+                }
+            },
+            error: function(xhr, status, msg) {
+                console.error(xhr);
+                console.error(msg);
+            }
+        });
+    });
+    function insert(action){
+        var value = null, value2 = null, value3 = null, value4 = null;
+        switch(action){
+            case 'insertcity':
+                value = $('#input1').val();    // 取得 input1 的值
+                value2 = $('#input2').val();   // 取得 input2 的值
+                var yes = confirm("新增確認: " + value + value2);
+                break;
+    
+            case 'insertsite':
+                value = $('#city').val();      // 取得縣市下拉選單的值
+                value2 = $('#input3').val();   // 取得 input3 的值
+                value3 = $('#input4').val();   // 取得 input4 的值
+                var yes = confirm("新增確認: " + value2 + value3);
+                break;
+    
+            case 'insertroad':
+                value = $('#site_id').val();   // 取得地區下拉選單的值
+                value2 = $('#input5').val();   // 取得 input5 的值
+                var yes = confirm("新增確認: " + value + value2);
+                break;
+        }
+        if (yes) { // 確認框點選確定後執行以下程式
+            $.ajax({
+                type: "GET",
+                url: 'action.php',
+                data: { act: action, val: value, val2: value2, val3: value3, val4: value4 },
+                dataType: "json",
+                error: function(xhr, status, msg) {
+                    console.error(xhr);
+                    console.error(msg);
+                }
+            });
+            $('#input1').val("");
+            $('#input2').val("");
+            $('#input3').val("");
+            $('#input4').val("");
+            $('#input5').val("");
+            $('#city').val($('#city option:first').val());
+            $('#city2').val($('#city2 option:first').val());
+            $('#site_id').val($('#site_id option:first').val());
+        }
+    }
+    
+    
+    // 將所有輸入框內容清空及所有下拉式選單回復到預設
+   
+
+    function resetcity() {
+        $('#city').empty().append('<option value="">請選擇</option>');
+        $('#city2').empty().append('<option value="">請選擇</option>');
+        $.ajax({
+            type: "GET",
+            url: 'action.php',
+            data: { act: 'city' },
+            dataType: "json",
+            success: function(result) {
+                for (i = 0; i < result.length; i++) {
+                    $('#city').append('<option value="' + result[i]['city_id'] + '">' + result[i]['city'] + '</option>');
+                    $('#city2').append('<option value="' + result[i]['city_id'] + '">' + result[i]['city'] + '</option>');
+                }
+            },
+            error: function(xhr, status, msg) {
+                console.error(xhr);
+                console.error(msg);
+            }
+        });
+    }
+    
+    </script>
+</html>
